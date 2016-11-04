@@ -1,0 +1,23 @@
+{
+  "name": "remember-bower",
+  "version": "0.0.0",
+  "license": "WTFPL",
+  "author": "David Chambers <dc@davidchambers.me>",
+  "bin": "./bin/remember-bower",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/davidchambers/remember-bower.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "2.9.x",
+    "sanctuary-style": "0.3.x",
+    "xyz": "1.1.x"
+  },
+  "files": [
+    "/LICENSE",
+    "/README.md",
+    "/bin/remember-bower",
+    "/package.json"
+  ]
+}
