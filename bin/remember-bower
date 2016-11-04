@@ -1,0 +1,63 @@
+#!/usr/bin/env node
+
+'use strict';
+
+var dirPath;
+var exclude = [];
+for (var idx = 2; idx < process.argv.length; idx += 1) {
+  var arg = process.argv[idx];
+  if (arg === '--exclude') {
+    idx += 1;
+    if (idx === process.argv.length) {
+      process.stderr.write('Missing value for --exclude\n');
+      process.exit(1);
+    }
+    exclude.push(process.argv[idx]);
+  } else {
+    if (dirPath != null) {
+      process.stderr.write('Unexpected argument\n');
+      process.exit(1);
+    }
+    dirPath = arg;
+  }
+}
+
+if (dirPath == null) {
+  process.stderr.write('No directory path provided\n');
+  process.exit(1);
+}
+
+var has = function(prop, obj) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+};
+
+var membership = function(a, b) {
+  return Object.keys(a.deps).reduce(function(errors, name) {
+    return has(name, b.deps) || exclude.indexOf(name) >= 0 ?
+      errors :
+      errors.concat(['"' + name + '" specified in ' +
+                     a.pkg + ' but not in ' + b.pkg]);
+  }, []);
+};
+
+var comparison = function(a, b) {
+  return Object.keys(a.deps).reduce(function(errors, name) {
+    return !has(name, b.deps) || b.deps[name] === a.deps[name] ?
+      errors :
+      errors.concat(['"' + name + '" specified as ' + a.deps[name] + ' in ' +
+                     a.pkg + ' but as ' + b.deps[name] + ' in ' + b.pkg]);
+  }, []);
+};
+
+var readPackage = function(pkg) {
+  return {pkg: pkg, deps: require(dirPath + '/' + pkg).dependencies};
+};
+
+var node = readPackage('package.json');
+var bower = readPackage('bower.json');
+
+[].concat(membership(node, bower))
+  .concat(membership(bower, node))
+  .concat(comparison(node, bower))
+  .map(function(error) { process.stderr.write(error + '\n'); return error; })
+  .map(function(error) { process.exit(1); });
