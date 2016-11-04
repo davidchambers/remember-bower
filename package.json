@@ -1,6 +1,6 @@
 {
   "name": "remember-bower",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "WTFPL",
   "author": "David Chambers <dc@davidchambers.me>",
   "bin": "./bin/remember-bower",
